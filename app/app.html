@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .main {
+      width: 400px;
+      height: 400px;
+      position: relative;
+    }
+
+    #main {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    #bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 400px;
+      background-size: contain;
+      height: 400px;
+    }
+
+    #point {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 400px;
+      background-size: contain;
+      height: 400px;
+    }
+
+    #fps {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 60px;
+      height: 30px;
+      background-color: aqua;
+      color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div id='bg'></div>
+    <canvas id='main'></canvas>
+    <div id='point'></div>
+  </div>
+  <h2>速度 - 时间 图</h2>
+  <div id="echart" style="width: 600px;height:400px;"></div>
+  <div id="fps"></div>
+</body>
+
+</html>
