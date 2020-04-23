@@ -7,6 +7,20 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <style>
+    * {
+      padding: 0;
+      margin: 0;
+      border: 0;
+      user-select: none;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
     .main {
       width: 400px;
       height: 400px;
@@ -59,8 +73,7 @@
     <canvas id='main'></canvas>
     <div id='point'></div>
   </div>
-  <h2>速度 - 时间 图</h2>
-  <div id="echart" style="width: 600px;height:400px;"></div>
+  <p>点击开始转动，再次点击停止</p>
   <div id="fps"></div>
 </body>
 

@@ -1,6 +1,6 @@
 const getRequestAnimationFrame = (): Function => {
   const fixRequestAnimationFrame: Function = (callback): void => { window.setTimeout(callback, 1000 / 60) }
-  return (window.requestAnimationFrame || window.webkitRequestAnimationFrame || fixRequestAnimationFrame)
+  return (window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || fixRequestAnimationFrame)
 }
 export interface Rect {
   width: number,
@@ -8,9 +8,8 @@ export interface Rect {
 }
 export class Turntable {
   // 开发使用
+  private isDev: boolean = false
   private devFPS: number = 0
-  public devSpeedArr: number[] = []
-  public devTimeArr: number[] = []
   private devLastTs: number = Date.now()
   // 正常属性
   private lastTs: number = 0
@@ -28,7 +27,7 @@ export class Turntable {
   private startAngle: number = 0
   private callback: Function
   private readyCallback: Function
-  ready: boolean = false
+  private ready: boolean = false
   /**
    * 
    * @param canvas canvas 元素
@@ -36,15 +35,46 @@ export class Turntable {
    * @param startAngle 开始弧度
    * @param readyCallback 图片加载完成会调
    * @param rect canvas 的尺寸。置空则采用图片尺寸
+   * @param isDev 是否开启开发者模式
    */
-  constructor(canvas: HTMLCanvasElement, imageSrc: string, startAngle: number, readyCallback: Function, rect: Rect) {
+  constructor(canvas: HTMLCanvasElement, imageSrc: string, startAngle: number, readyCallback: Function, rect: Rect, isDev: boolean) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
     this.image = new Image()
     this.image.src = imageSrc
     this.startAngle = startAngle
     this.readyCallback = readyCallback
+    this.isDev = isDev
     this.image.onload = () => { this.load(rect) }
+  }
+  /**
+   * 开始转动转盘
+   * @param turnByRoundTime  转 1 圈所用时间(ms)
+   */
+  public start(turnByRoundTime: number): void {
+    if (!this.ready || this.isStart) return
+    this.reset()
+    this.speed = 2 * Math.PI / (turnByRoundTime / 1000)
+    this.isStart = true
+  }
+  /**
+   * stop 并不能马上把转盘停下来，只会慢慢减速停止。但在帧数稳定的情况下，会在 1 s 内结束
+   * @param pos 期望转到 弧度
+   * @param callback 停下后的回调
+   */
+  public stop(angle: number, callback: Function): void {
+    // 已经设置了减速，动画没完成之前则不能再重新设置
+    if (!this.ready || this.endAngle >= 0) return
+    this.callback = callback
+    this.endAngle = angle
+  }
+  /**
+   * 还原旋转角度
+   */
+  public resetCtxRotate(): void {
+    this.ctx.restore()
+    this.ctx.save()
+    this.rotateAngle = 0
   }
   private load(rect: Rect): void {
     if (rect == null) {
@@ -71,7 +101,7 @@ export class Turntable {
       this.lastTs = now
       this.render(dist)
       myRequestAnimationFrame(step)
-      if (__DEV__ && document.getElementById('fps')) {
+      if (this.isDev && document.getElementById('fps')) {
         this.devFPS += 1
         const timeDist: number = now - this.devLastTs
         if (timeDist >= 1000) {
@@ -89,27 +119,6 @@ export class Turntable {
       this.readyCallback()
     }
   }
-  /**
-   * 开始转动转盘
-   * @param turnByRoundTime  转 1 圈所用时间(ms)
-   */
-  public start(turnByRoundTime: number): void {
-    if (!this.ready || this.isStart) return
-    this.reset()
-    this.speed = 2 * Math.PI / (turnByRoundTime / 1000)
-    this.isStart = true
-  }
-  /**
-   * stop 并不能马上把转盘停下来，只会慢慢减速停止。但在帧数稳定的情况下，会在 1 s 内结束
-   * @param pos 期望转到 弧度
-   * @param callback 停下后的回调
-   */
-  public stop(angle: number, callback: Function): void {
-    // 已经设置了减速，动画没完成之前则不能再重新设置
-    if (!this.ready || this.endAngle >= 0) return
-    this.callback = callback
-    this.endAngle = angle
-  }
   private allStop(): void {
     if (this.callback) this.callback()
     this.resetCtxRotate()
@@ -123,18 +132,6 @@ export class Turntable {
     this.callback = null
     this.rotateTime = 0
     this.fristSecDist = 0
-    if (__DEV__) {
-      this.devSpeedArr = []
-      this.devTimeArr = []
-    }
-  }
-  /**
-   * 还原旋转角度
-   */
-  public resetCtxRotate(): void {
-    this.ctx.restore()
-    this.ctx.save()
-    this.rotateAngle = 0
   }
   private renderImage(): void {
     this.ctx.clearRect(-this.translatePos.width, -this.translatePos.height, this.canvas.width, this.canvas.height)
@@ -152,11 +149,9 @@ export class Turntable {
       else {
         if (this.fristSecDist == 0) {
           this.fristSecDist = this.rotateAngle
-          console.log('前 ' + this.rotateTime + ' s的距离 ---- ' + this.fristSecDist * (180 / Math.PI), '当前时间' + this.rotateTime)
         }
         // 结束角度确定之后，开始减速
         if (this.endAngle >= 0 && this.endTs == 0) {
-          console.log('最后 1s 之前的距离 ---- ' + this.rotateAngle * (180 / Math.PI), '当前时间' + this.rotateTime)
           this.endTs = this.rotateTime + 1000
           this.resetCtxRotate()
           this.ctx.rotate(this.endAngle - this.fristSecDist)
@@ -168,10 +163,6 @@ export class Turntable {
         }
       }
       let angle: number = speed * (ts / 1000)
-      if (__DEV__) {
-        this.devTimeArr.push(this.rotateTime)
-        this.devSpeedArr.push(speed)
-      }
       this.rotateAngle += angle
       if (this.isStart && this.endTs != 0) {
         if (this.rotateTime >= this.endTs || this.rotateAngle >= this.fristSecDist) {
@@ -181,8 +172,6 @@ export class Turntable {
             this.rotateAngle += angle
           }
           else {
-            console.log('最后 1s 的距离 ---- ' + this.rotateAngle * (180 / Math.PI), '当前时间' + this.rotateTime)
-            console.log('--------')
             this.allStop()
           }
         }

@@ -16,13 +16,6 @@ const config = webpackMerge(commonConfig, {
     compress: true,
     port,
     host,
-    historyApiFallback: true,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      }
-    },
   },
   devtool: 'inline-source-map',
   plugins: [
@@ -37,16 +30,6 @@ const config = webpackMerge(commonConfig, {
   ],
   module: {
     rules: [
-      {
-        test: new RegExp(`^(?!.*\\.common).*\\.css`),
-        use: ['style-loader', 'css-loader?modules', 'postcss-loader'],
-        exclude: [nodeModuleDir]
-      },
-      {
-        test: new RegExp(`^(.*\\.common).*\\.css`),
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
-        exclude: [nodeModuleDir]
-      },
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [{
