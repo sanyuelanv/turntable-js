@@ -13,7 +13,7 @@ let flag: boolean = false
 const testResulrArr = [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75]
 const turntable = new Turntable(canvas, gift, 0.01 * Math.PI, () => {
   console.log('加载完成')
-  document.onclick = async () => {
+  document.onclick = () => {
     if (!flag) {
       turntable.start(250)
       flag = true
@@ -25,4 +25,4 @@ const turntable = new Turntable(canvas, gift, 0.01 * Math.PI, () => {
     }
 
   }
-}, { width: 400, height: 400 }, __DEV__)
+}, { width: 400, height: 400 }, document.getElementById('fps'))

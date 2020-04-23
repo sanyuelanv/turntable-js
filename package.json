@@ -1,5 +1,5 @@
 {
-  "name": "turntable",
+  "name": "sanyuelanv-turntable",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -27,7 +27,5 @@
     "webpack-dev-server": "^3.10.3",
     "webpack-merge": "^4.2.2"
   },
-  "dependencies": {
-    "echarts": "^4.7.0"
-  }
+  "dependencies": {}
 }

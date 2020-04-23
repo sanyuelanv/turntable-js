@@ -8,7 +8,7 @@ export interface Rect {
 }
 export class Turntable {
   // 开发使用
-  private isDev: boolean = false
+  private fpsDom: HTMLElement
   private devFPS: number = 0
   private devLastTs: number = Date.now()
   // 正常属性
@@ -35,16 +35,16 @@ export class Turntable {
    * @param startAngle 开始弧度
    * @param readyCallback 图片加载完成会调
    * @param rect canvas 的尺寸。置空则采用图片尺寸
-   * @param isDev 是否开启开发者模式
+   * @param fpsDom 展示 FPS 的demo
    */
-  constructor(canvas: HTMLCanvasElement, imageSrc: string, startAngle: number, readyCallback: Function, rect: Rect, isDev: boolean) {
+  constructor(canvas: HTMLCanvasElement, imageSrc: string, startAngle: number, readyCallback: Function, rect: Rect, fpsDom: HTMLElement) {
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
     this.image = new Image()
     this.image.src = imageSrc
     this.startAngle = startAngle
     this.readyCallback = readyCallback
-    this.isDev = isDev
+    this.fpsDom = fpsDom
     this.image.onload = () => { this.load(rect) }
   }
   /**
@@ -101,12 +101,12 @@ export class Turntable {
       this.lastTs = now
       this.render(dist)
       myRequestAnimationFrame(step)
-      if (this.isDev && document.getElementById('fps')) {
+      if (this.fpsDom) {
         this.devFPS += 1
         const timeDist: number = now - this.devLastTs
         if (timeDist >= 1000) {
           this.devLastTs = now
-          document.getElementById('fps').innerHTML = this.devFPS > 60 ? '60' : this.devFPS + ''
+          this.fpsDom.innerHTML = this.devFPS > 60 ? '60' : this.devFPS + ''
           this.devFPS = 0
         }
       }

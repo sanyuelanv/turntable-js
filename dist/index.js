@@ -12,12 +12,10 @@ var Turntable = /** @class */ (function () {
      * @param startAngle 开始弧度
      * @param readyCallback 图片加载完成会调
      * @param rect canvas 的尺寸。置空则采用图片尺寸
-     * @param isDev 是否开启开发者模式
+     * @param fpsDom 展示 FPS 的demo
      */
-    function Turntable(canvas, imageSrc, startAngle, readyCallback, rect, isDev) {
+    function Turntable(canvas, imageSrc, startAngle, readyCallback, rect, fpsDom) {
         var _this = this;
-        // 开发使用
-        this.isDev = false;
         this.devFPS = 0;
         this.devLastTs = Date.now();
         // 正常属性
@@ -37,7 +35,7 @@ var Turntable = /** @class */ (function () {
         this.image.src = imageSrc;
         this.startAngle = startAngle;
         this.readyCallback = readyCallback;
-        this.isDev = isDev;
+        this.fpsDom = fpsDom;
         this.image.onload = function () { _this.load(rect); };
     }
     /**
@@ -97,12 +95,12 @@ var Turntable = /** @class */ (function () {
             _this.lastTs = now;
             _this.render(dist);
             myRequestAnimationFrame(step);
-            if (_this.isDev && document.getElementById('fps')) {
+            if (_this.fpsDom) {
                 _this.devFPS += 1;
                 var timeDist = now - _this.devLastTs;
                 if (timeDist >= 1000) {
                     _this.devLastTs = now;
-                    document.getElementById('fps').innerHTML = _this.devFPS > 60 ? '60' : _this.devFPS + '';
+                    _this.fpsDom.innerHTML = _this.devFPS > 60 ? '60' : _this.devFPS + '';
                     _this.devFPS = 0;
                 }
             }
