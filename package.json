@@ -1,6 +1,6 @@
 {
   "name": "sanyuelanv-turntable",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -10,6 +10,10 @@
   "browserslist": [
     "last 2 version"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanyuelanv/turntable-js"
+  },
   "author": "sanyuelanv",
   "license": "ISC",
   "devDependencies": {
