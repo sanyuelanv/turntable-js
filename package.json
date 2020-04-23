@@ -1,6 +1,6 @@
 {
   "name": "sanyuelanv-turntable",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -15,6 +15,7 @@
     "url": "git+https://github.com/sanyuelanv/turntable-js"
   },
   "author": "sanyuelanv",
+  "keywords":["转盘","无限转动转盘","流畅转动","抽奖","转盘抽奖","Luck draw","draw a lottery or raffle"],
   "license": "ISC",
   "devDependencies": {
     "babel-loader": "^8.1.0",
