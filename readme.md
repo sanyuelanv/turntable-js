@@ -1,5 +1,4 @@
 ## 缓动无限转盘
-
 ### 需求
 优化转盘转动效果
 1. 缓动加速转动，
@@ -59,4 +58,6 @@ constructor Turntable(canvas: HTMLCanvasElement, imageSrc: string, startAngle: n
 */
 (method) Turntable.resetCtxRotate(): void
 ```
-  
+
+### 优点 
+纯 `TS` 编写，不用查文档即可使用，如果可以的话，在 github 上给一个 start
